@@ -158,6 +158,7 @@ resource "aws_route53_record" "bastion_record_name" {
 }
 
 resource "aws_lb" "bastion_lb" {
+  count = var.bastion_instance_count ? 1 : 0
   internal = var.is_lb_private
   name     = "${local.name_prefix}-lb"
 
