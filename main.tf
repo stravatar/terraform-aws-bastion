@@ -152,8 +152,8 @@ resource "aws_route53_record" "bastion_record_name" {
 
   alias {
     evaluate_target_health = true
-    name                   = aws_lb.bastion_lb.dns_name
-    zone_id                = aws_lb.bastion_lb.zone_id
+    name                   = aws_lb.bastion_lb[count.index].dns_name
+    zone_id                = aws_lb.bastion_lb[count.index].zone_id
   }
 }
 
@@ -187,11 +187,11 @@ resource "aws_lb_target_group" "bastion_lb_target_group" {
 resource "aws_lb_listener" "bastion_lb_listener_22" {
   count = var.bastion_instance_count > 0 ? 1 : 0
   default_action {
-    target_group_arn = aws_lb_target_group.bastion_lb_target_group.arn
+    target_group_arn = aws_lb_target_group.bastion_lb_target_group[count.index].arn
     type             = "forward"
   }
 
-  load_balancer_arn = aws_lb.bastion_lb.arn
+  load_balancer_arn = aws_lb.bastion_lb[count.index].arn
   port              = var.public_ssh_port
   protocol          = "TCP"
 }
@@ -272,7 +272,7 @@ resource "aws_autoscaling_group" "bastion_auto_scaling_group" {
   health_check_type         = "EC2"
 
   target_group_arns = [
-    aws_lb_target_group.bastion_lb_target_group.arn,
+    aws_lb_target_group.bastion_lb_target_group[count.index].arn,
   ]
 
   termination_policies = [

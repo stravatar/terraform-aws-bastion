@@ -15,7 +15,7 @@ output "bucket_name" {
 }
 
 output "elb_ip" {
-  value = aws_lb.bastion_lb.dns_name
+  value = aws_lb.bastion_lb[*].dns_name
 }
 
 output "private_instances_security_group" {
